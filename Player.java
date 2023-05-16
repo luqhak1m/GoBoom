@@ -1,51 +1,55 @@
-// import java.util.ArrayList;
-
-// public class Player {
-//     private ArrayList<Card> hand;
-
-//     public Player(){
-//         hand = new ArrayList<Card>();
-//     }
-
-//     public ArrayList<Card> getHand(){
-//         return hand;
-//     }
-
-//     public void addCard(Card card){
-//         hand.add(card);
-//     }
-
-//     public Card playCard(int index){
-//         return hand.remove(index);
-//     }
-// }
 
 import java.util.ArrayList;
 
-public class Player {
-    private String name;
-    private ArrayList<Card> cards;
-    private int score;
+public class Player extends Deck{
 
-    public Player(String name, ArrayList<Card> cards) {
-        this.name = name;
-        this.cards = cards;
-        this.score = 0;
+    private int turn, score, playerNum;
+
+    public Player(int playerNum, ArrayList<Card> playerCards, int turn){
+        super(playerCards);
+        this.turn=turn;
+        this.playerNum=playerNum;
+        this.score=0;
     }
 
-    public String getName() {
-        return name;
+    public void setPlayersScore(int n){
+        this.score=n;
     }
 
-    public ArrayList<Card> getCards() {
-        return cards;
+    public void setPlayerNum(int n){
+        this.playerNum=n;    
     }
 
-    public int getScore() {
+    public int getPlayerNum(){
+        return playerNum;
+    }
+
+    public int getPlayerTurn(){
+        return turn;
+    }
+
+    public int getPlayerScore(){
         return score;
     }
 
-    public void setScore(int score) {
-        this.score = score;
+    private static int getFirstPlayerIndex(Card leadCard) {
+        char rank = leadCard.getNumber();
+        switch(rank){
+            case 'A': case '5': case '9': case 'K':{
+                return 1; // Player1 goes first
+            }
+            case '2': case '6': case 'X':{
+                return 2; // Player2 goes first
+            }
+            case '3': case '7': case 'J':{
+                return 3; // Player3 goes first
+            }
+            case '4': case '8': case 'Q':{
+                return 4; // Player4 goes first
+            }
+            default: {
+                return 0; // Default to Player1
+            }
+        }
     }
 }
