@@ -1,5 +1,6 @@
 
 import java.util.ArrayList;
+//import java.util.*;
 
 public class GoBoom {
 
@@ -60,13 +61,69 @@ public class GoBoom {
                     players[i] = new Player(i+1, playerCards, currentPlayerIndex+1);
                 }
             }
+
         }
 
         // Display cards, deck, center deck, score and turn
         int turn=0;
         printRoundsDetails(numOfPlayers, players, center, mainDeck, turn);
-    }
+    
 
+        //gameplay
+
+        //Scanner scanner = new Scanner(System.in);
+        //input.nextInt();
+
+
+        //check if the card is eligible to play
+        boolean hasEligibleCard = false;
+        for (Card card : players[turn].getDeck()){
+            //players[turn].printDeck();
+            if(card.getSuit() == (center.getLeadCard().getSuit()) || card.getNumber()==center.getLeadCard().getNumber()){
+                hasEligibleCard = true;
+                System.out.println(("There is an eligible card : ") + card.getSuit() + card.getNumber());
+                break;
+            }
+            else{
+                continue;
+            }
+        }
+        if (hasEligibleCard){
+            //System.out.println("Enter command: ");
+        }
+
+        else{
+            //player doesnt have eligible card, so need to draw from deck
+            System.out.println("There is no eligible card");
+
+            //if (players[turn].getDeck() != (center.getLeadCard().getSuit()) && card.getNumber()!=center.getLeadCard().getNumber()){
+                if (mainDeck.getDeck().size()>0){
+                    Card drawCard = mainDeck.getCardAtIndex(0);
+                    System.out.println(("Card drawn : " + drawCard.getSuit() + drawCard.getNumber()));
+                    players[turn].addCard(drawCard);
+                    mainDeck.removeCardAtIndex(0);
+
+                    do{
+                        //check if the drawn cards is eligible or not
+                        if(drawCard.getSuit() == (center.getLeadCard().getSuit()) || drawCard.getNumber()==center.getLeadCard().getNumber()){
+                            System.out.println(("It is an eligible card : ") + drawCard.getSuit() + drawCard.getNumber());
+                            break;
+                        }
+                        else{
+                            System.out.println("It is still not eligible");
+                            continue;
+                        }
+                    } while(mainDeck.length!=0);
+                    
+
+                }
+                else{
+                    System.out.println("No cards left in the deck!");
+                    //break; 
+                }
+        }        
+        }
+        
     public static void printRoundsDetails(int numOfPlayers, Player[] players, Deck center, Deck mainDeck, int turn){
          // print the players' cards
          for(int i=0; i<numOfPlayers; i++){
@@ -97,4 +154,5 @@ public class GoBoom {
          // print current player's turn
          System.out.println("Turn: " + turn);
     }
+    
 }
