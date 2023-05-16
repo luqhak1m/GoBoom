@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class GoBoom {
-    private static final String[] ranks = {"A", "5", "9", "K", "2", "6", "10", "3", "7", "J", "4", "8", "Q"};
+    private static final String[] ranks = {"2", "3", "4", "5", "6", "7", "8", "9", "X", "J", "Q", "K", "A"};
     private static final String[] players = {"Player1", "Player2", "Player3", "Player4"};
     private static final int numOfPlayers = 4;
     private static final int numOfCards = 7;
@@ -15,8 +15,8 @@ public class GoBoom {
         String[] suits = {"h", "d", "c", "s"};
         for (String suit : suits) {
             for (String rank : ranks) {
-                Card card = new Card(rank, suit);
-                deck.add(card);
+                    Card card = new Card(rank, suit);
+                    deck.add(card);    
             }
         }
 
@@ -45,21 +45,35 @@ public class GoBoom {
         // print the players' cards
         printPlayerCards(playerList);
 
-       // print the lead card
-       System.out.println("Center: [" + leadCard + "]");
+        // print the lead card
+        System.out.println("Center: [" + leadCard + "]");
 
-       // print the remaining deck
-       System.out.print("Deck: ");
-       printCards(deck);
+        // print the remaining deck
+        System.out.print("Deck: ");
+        printCards(deck);
 
-       // print the score
-       System.out.println("Score: " + getPlayerScores(playerList));
+        // print the score
+        System.out.println("Score: " + getPlayerScores(playerList));
 
-       //print the first player
-       System.out.println("Turn: " + "Player"+firstPlayerIndex);
+        // print the first player
+        System.out.println("Turn: " + "Player"+firstPlayerIndex);
 
-    //    // print the current turn
-    //    System.out.println("Turn: " + getCurrentTurn(playerList, firstPlayerIndex));
+        // checking if a value corresponds to the rank assigned to each card
+        //    String[] ranks = {"2", "3", "4", "5", "6", "7", "8", "9", "X", "J", "Q", "K", "A"};
+
+        //     for (String rank : ranks) {
+        //         Card card = new Card(rank, "s");
+        //         int value = card.assignValue(rank);
+        //         if (value == 0) {
+        //             System.out.println(rank + " does not have a value.");
+        //         } else {
+        //             System.out.println(rank + " has a value of " + value + ".");
+        //         }
+        //     }
+        
+
+        //    // print the current turn
+        //    System.out.println("Turn: " + getCurrentTurn(playerList, firstPlayerIndex));
     }
 
     private static int getFirstPlayerIndex(Card leadCard) {
@@ -88,13 +102,6 @@ public class GoBoom {
             }
         }
     }
-
-    // private static void printPlayerCards(ArrayList<Player> playerList) {
-    //     for (Player player : playerList) {
-    //         System.out.print(player.getName() + ": ");
-    //         printCards(player.getCards());
-    //     }
-    // }
 
     private static void printCards(ArrayList<Card> cards) {
         StringBuilder cardBuilder = new StringBuilder();
@@ -127,24 +134,4 @@ public class GoBoom {
         }
         return scores;
     }
-
-    // private static String getPlayerScores(ArrayList<Player> playerList) {
-    //     //for (Player player : playerList) {
-    //     //     System.out.print("Score: " + player.getName() + " = " + player.getScore() + " | ");
-    //     // }
-    //     StringBuilder scoreBuilder = new StringBuilder();
-    //     for (Player player : playerList) { //iterates the playerlist using for-each loop
-    //         scoreBuilder.append(player.getName()).append(" = ").append(player.getScore()).append(" | ");
-    //     }
-    //     String scores = scoreBuilder.toString().trim(); //trims whitespace
-    //     if (!scores.isEmpty()) {
-    //         scores = scores.substring(0, scores.length() - 1); //index 0 - end (removes '|') 
-    //     }
-    //     return scores;
-    // }
-
-    // private static String getCurrentTurn(ArrayList<Player> playerList, int firstPlayerIndex) {
-    //     int currentTurnIndex = firstPlayerIndex % numOfPlayers;
-    //     return playerList.get(currentTurnIndex).getName();
-    // }
 }
