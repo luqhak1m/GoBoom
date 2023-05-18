@@ -72,7 +72,7 @@ public class GoBoom {
         //gameplay
 
         //Scanner scanner = new Scanner(System.in);
-        //input.nextInt();
+        //scanner.nextInt();
 
 
         //check if the card is eligible to play
@@ -82,7 +82,7 @@ public class GoBoom {
             if(card.getSuit() == (center.getLeadCard().getSuit()) || card.getNumber()==center.getLeadCard().getNumber()){
                 hasEligibleCard = true;
                 System.out.println(("There is an eligible card : ") + card.getSuit() + card.getNumber());
-                break;
+                //break;
             }
             else{
                 continue;
