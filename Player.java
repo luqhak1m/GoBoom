@@ -19,6 +19,10 @@ public class Player extends Deck{
     public void setPlayerNum(int n){
         this.playerNum=n;    
     }
+    
+    public void setPlayerTurn(int n){
+        this.playerNum=n;
+    }
 
     public int getPlayerNum(){
         return playerNum;
