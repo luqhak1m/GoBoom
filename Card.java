@@ -32,6 +32,6 @@ public class Card{
         System.out.println("value is : " + this.getValue() + ", number is: " + this.getNumber() + ", suit is  : " + this.getSuit());
     }
     public void printCurrentCard(){
-        System.out.printf("%c%c", this.getNumber(), this.getSuit());
+        System.out.printf("%c%c", this.getSuit(), this.getNumber());
     }
 }
