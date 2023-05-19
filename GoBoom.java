@@ -1,6 +1,8 @@
 
 import java.util.ArrayList;
-//import java.util.*;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Scanner;
 
 public class GoBoom {
 
@@ -39,97 +41,181 @@ public class GoBoom {
         // //   The first lead card determines the first player and Deal 7 cards to each of the 4 players.
 
         // Adding cards to the new player deck
-        for (int i = 0; i < numOfPlayers; i++) {
+        for (int i=0; i<numOfPlayers; i++) {
 
             ArrayList<Card> playerCards = new ArrayList<>();
-            char[] ranks = {'A', '5', '9', 'K', '2', '6', 'X', '3', '7', 'J', '4', '8', 'Q'};
-            char leadCardNum=center.getLeadCard().getNumber();
-
+            
             // Add cards to the playersCard Array List.
             for (int j = 0; j < numOfCards; j++){
                 Card cardToBeAdded=mainDeck.getCardAtIndex(0);
                 playerCards.add(cardToBeAdded);
                 mainDeck.removeCardAtIndex(0);
             }
+            
+            int currentPlayerNumber=(getFirstPlayerIndex(center.getLeadCard())+i)%4;
+            if(currentPlayerNumber==0){ // because 4%4==0 but we wanna make it ==4
+                currentPlayerNumber=4;
+            }
+            
+            players[i] = new Player(currentPlayerNumber, playerCards, i+1);
+        }
+                
+        int turn=1;
+        boolean stopGame=false;
+        Scanner input = new Scanner(System.in);
 
-            // Set each players' turn.
-            for(int k=0; k<ranks.length;k++){
-                if(leadCardNum==ranks[k]){
-                    int currentPlayerIndex = (k + i) % numOfPlayers;
+        Card leadCenterDeck=center.getLeadCard();
+        Card currentLeadCard=leadCenterDeck;
+        Card currentPlayedCard=players[turn-1].getCardAtIndex(turn-1); // just a placeholder
+        Player currentLeadPlayer=players[turn-1]; // just a placeholder
 
-                    // Create players.
-                    players[i] = new Player(i+1, playerCards, currentPlayerIndex+1);
+        // Game starts.
+        while(turn>0 && !stopGame){ // This will be the tricks.
+            for(int i=0; i<numOfPlayers; i++){ // This will be each trick's turn, and since there's four players there will only be 4 turns.
+                if(turn==1){
+                    for(Player player:players){
+                        if(player.getPlayerTurn()==i+1){ // Get player on current turn
+                            if(i+1==1){ // If it's the first round of the first trick, this will make the first player moves.
+                                System.out.print("At the beginning of a game. The first lead card ");
+                                leadCenterDeck.printCurrentCard();
+                                System.out.print(" is placed at the center. Player" + player.getPlayerNum() + " is the first player because of "); 
+                                leadCenterDeck.printCurrentCard();
+                                currentLeadPlayer=player;
+                                currentLeadCard=leadCenterDeck;
+                            }
+
+                            // Print round details
+                            printRoundsDetails(numOfPlayers, players, center, mainDeck, turn);
+                            System.out.println("Turn: Player" + player.getPlayerNum());
+                            
+                            //check if the card is eligible to play
+                            showEligibleCard(player, center, mainDeck);
+                            
+                            // Check for played card
+                            String userInput=getUserInput(input);
+
+                            // This can be a function
+                            for(int j=0; j<player.getDeck().size(); j++){
+                                if(i+1!=1){
+                                    leadCenterDeck=center.getLeadCard(); // Get the lead card on center.
+                                }
+                                currentPlayedCard=player.getCardAtIndex(j); // Get the currently played card.
+                                if(checkHigherVal(j, currentLeadCard, currentPlayedCard, currentLeadPlayer, player, center, returnPlayedSuit(userInput), returnPlayedNum(userInput))){ // If the played card's value is bigger than lead card value.
+                                    currentLeadCard=currentPlayedCard;
+                                    currentLeadPlayer=player;
+                                }
+                            }
+                        }
+                    }
+                }
+                else if(turn>1){ // For trick > 1.
+                    for(Player player:players){
+                        if(i+1==1){ // If it's the first round of the trick.
+                            if(currentLeadPlayer==player){ // Leader of previous trick will move first.
+
+                                // Print round details
+                                printRoundsDetails(numOfPlayers, players, center, mainDeck, turn);
+                                System.out.println("Turn: Player" + player.getPlayerNum());
+                                
+                                // We don't check for eligible card because center is empty.
+                                
+                                // Check for played card
+                                String userInput=getUserInput(input);
+
+                                // This can be a function
+                                for(int j=0; j<player.getDeck().size(); j++){
+                                    if(i+1!=1){
+                                        leadCenterDeck=center.getLeadCard(); // Get the lead card on center.
+                                    }
+                                    currentPlayedCard=player.getCardAtIndex(j); // Get the currently played card.
+                                    if(checkHigherVal(j, currentLeadCard, currentPlayedCard, currentLeadPlayer, player, center, returnPlayedSuit(userInput), returnPlayedNum(userInput))){ // If the played card's value is bigger than lead card value.
+                                        currentLeadCard=currentPlayedCard;
+                                        currentLeadPlayer=player;
+                                    }
+                                }
+                            }
+                        }
+                        else{ // If it's not the first round of the trick (2,3,4,...n).
+
+                            // Since the player with turn #1 is now different, we need to change for other as well.
+
+                            if(player.getPlayerTurn()==i+1){ 
+                                // Print round details
+                                printRoundsDetails(numOfPlayers, players, center, mainDeck, turn);
+                                System.out.println("Turn: Player" + player.getPlayerNum());
+                                
+                                //check if the card is eligible to play
+                                showEligibleCard(player, center, mainDeck);
+                                
+                                // Check for played card
+                                String userInput=getUserInput(input);
+
+                                // This can be a function
+                                for(int j=0; j<player.getDeck().size(); j++){
+                                    if(i+1!=1){
+                                        leadCenterDeck=center.getLeadCard(); // Get the lead card on center.
+                                    }
+                                    currentPlayedCard=player.getCardAtIndex(j); // Get the currently played card.
+                                    if(checkHigherVal(j, currentLeadCard, currentPlayedCard, currentLeadPlayer, player, center, returnPlayedSuit(userInput), returnPlayedNum(userInput))){ // If the played card's value is bigger than lead card value.
+                                        currentLeadCard=currentPlayedCard;
+                                        currentLeadPlayer=player;
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
+            System.out.println();
+            System.out.println("*** Player " + currentLeadPlayer.getPlayerNum() + " wins Trick #" + turn + " ***");
+            center.getDeck().clear();
 
+            // Change the remaining user's turn based on the previous trick winner.
+
+
+            turn++;
         }
-
-        // Display cards, deck, center deck, score and turn
-        int turn=0;
-        printRoundsDetails(numOfPlayers, players, center, mainDeck, turn);
-    
 
         //gameplay
 
-        //Scanner scanner = new Scanner(System.in);
-        //scanner.nextInt();
+       
 
+             
+        }
 
-        //check if the card is eligible to play
-        boolean hasEligibleCard = false;
-        for (Card card : players[turn].getDeck()){
-            //players[turn].printDeck();
-            if(card.getSuit() == (center.getLeadCard().getSuit()) || card.getNumber()==center.getLeadCard().getNumber()){
-                hasEligibleCard = true;
-                System.out.println(("There is an eligible card : ") + card.getSuit() + card.getNumber());
-                //break;
+    private static int getFirstPlayerIndex(Card leadCard) {
+        char rank = leadCard.getNumber();
+        switch(rank){
+            case 'A': case '5': case '9': case 'K':{
+                return 1; // Player1 goes first
             }
-            else{
-                continue;
+            case '2': case '6': case 'X':{
+                return 2; // Player2 goes first
+            }
+            case '3': case '7': case 'J':{
+                return 3; // Player3 goes first
+            }
+            case '4': case '8': case 'Q':{
+                return 4; // Player4 goes first
+            }
+            default: {
+                return 0; // Default to Player1
             }
         }
-        if (hasEligibleCard){
-            //System.out.println("Enter command: ");
-        }
-
-        else{
-            //player doesnt have eligible card, so need to draw from deck
-            System.out.println("There is no eligible card");
-
-            //if (players[turn].getDeck() != (center.getLeadCard().getSuit()) && card.getNumber()!=center.getLeadCard().getNumber()){
-                if (mainDeck.getDeck().size()>0){
-                    Card drawCard = mainDeck.getCardAtIndex(0);
-                    System.out.println(("Card drawn : " + drawCard.getSuit() + drawCard.getNumber()));
-                    players[turn].addCard(drawCard);
-                    mainDeck.removeCardAtIndex(0);
-
-                    do{
-                        //check if the drawn cards is eligible or not
-                        if(drawCard.getSuit() == (center.getLeadCard().getSuit()) || drawCard.getNumber()==center.getLeadCard().getNumber()){
-                            System.out.println(("It is an eligible card : ") + drawCard.getSuit() + drawCard.getNumber());
-                            break;
-                        }
-                        else{
-                            System.out.println("It is still not eligible");
-                            continue;
-                        }
-                    } while(mainDeck.length!=0);
-                    
-
-                }
-                else{
-                    System.out.println("No cards left in the deck!");
-                    //break; 
-                }
-        }        
-        }
+    }
         
     public static void printRoundsDetails(int numOfPlayers, Player[] players, Deck center, Deck mainDeck, int turn){
-         // print the players' cards
-         for(int i=0; i<numOfPlayers; i++){
-             System.out.print("Player " + players[i].getPlayerNum() + ": ");
-             players[i].printDeck();
-         }
+        System.out.println();
+        System.out.println("Trick #" + turn);
+
+        for(int i=0; i<numOfPlayers; i++){
+            for(Player player:players){
+                if(player.getPlayerTurn()==i+1){
+                    System.out.print("Player" + player.getPlayerNum() + ": ");
+                    player.printDeck();
+                }
+            }
+        }
 
          // print the lead card
          System.out.print("Center: ");
@@ -150,9 +236,98 @@ public class GoBoom {
                 System.out.println();
             }
          }
- 
-         // print current player's turn
-         System.out.println("Turn: " + turn);
+    }
+
+    public static Boolean checkEligibleCard(Card card, Deck center){
+        if(card.getSuit()==(center.getLeadCard().getSuit()) || card.getNumber()==center.getLeadCard().getNumber()){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    public static void showEligibleCard(Player player, Deck center, Deck mainDeck){
+        boolean hasEligibleCard = false;
+        for (Card card : player.getDeck()){
+            //players[turn].printDeck();
+            if(checkEligibleCard(card, center)){
+                hasEligibleCard=true;
+                System.out.print(("There is an eligible card : "));card.printCurrentCard();System.out.println();
+                break;
+            }
+            else{
+                continue;
+            }
+        }
+        if(!hasEligibleCard){
+            //player doesnt have eligible card, so need to draw from deck
+            System.out.println("There is no eligible card");
+
+            //if (players[turn].getDeck() != (center.getLeadCard().getSuit()) && card.getNumber()!=center.getLeadCard().getNumber()){
+            do{
+                Card drawCard = mainDeck.getCardAtIndex(0);
+                System.out.println(("Card drawn : " + drawCard.getSuit() + drawCard.getNumber()));
+                player.addCard(drawCard);
+                mainDeck.removeCardAtIndex(0);
+
+                    //check if the drawn cards is eligible or not
+                    if(drawCard.getSuit() == (center.getLeadCard().getSuit()) || drawCard.getNumber()==center.getLeadCard().getNumber()){
+                        System.out.println(("It is an eligible card : ") + drawCard.getSuit() + drawCard.getNumber());
+                        break;
+                    }
+                    else{
+                        System.out.println("It is still not eligible");
+                        continue;
+                    }
+                } while(mainDeck.getDeck().size()!=0);
+
+            if(mainDeck.getDeck().size()==0){
+                System.out.println("No cards left in the deck!");
+                //break; 
+            }    
+        }  
+    }
+
+    public static boolean checkHigherVal(int j, Card currentLeadCard, Card currentPlayedCard, Player currentLeadPlayer, Player player, Deck center, char playedCardSuit, char playedCardNum){
+
+            if(currentPlayedCard.getSuit()==playedCardSuit && currentPlayedCard.getNumber()==playedCardNum){ // If the played card is valid.
+                center.addCard(currentPlayedCard);  
+                player.removeCardAtIndex(j);
+
+                if(currentPlayedCard.getValue()>currentLeadCard.getValue()){ // If the played card's value is bigger than lead card value.
+                    return true;
+                }
+                else{
+                    return false;
+                }
+            }
+        return false;
     }
     
+
+    public static String getUserInput(Scanner input){
+        System.out.print(">"); 
+        String playerComm=input.next();
+        return playerComm;
+    }
+    
+    // public static void checkUserInput(String userInput){
+    //     if(userInput.length()==2){
+    //         char[] playedCardArr = userInput.toCharArray();
+    //         playedCardSuit=playedCardArr[0];
+    //         playedCardNum=playedCardArr[1];
+    //     }
+    // }
+
+    public static char returnPlayedSuit(String userInput){
+        char[] playedCardArr = userInput.toCharArray();
+        return playedCardArr[0];
+    }
+    public static char returnPlayedNum(String userInput){
+        char[] playedCardArr = userInput.toCharArray();
+        return playedCardArr[1];
+    }
+    
+
 }
