@@ -72,4 +72,12 @@ public class Deck{
     public void setLeadCard(Card card){
         this.leadCard=card;
     }
+
+    // Check if deck is empty
+    public boolean emptyDeck(){
+        if(deck.size()==0){
+            return true;
+        }
+        else{return false;}
+    }
 }
