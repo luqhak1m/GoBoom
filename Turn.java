@@ -1,4 +1,3 @@
-
 import java.util.Scanner;
 import java.util.ArrayList;
 
@@ -275,6 +274,22 @@ public class Turn {
         else if(userInput.equals("s")){
             setMode(1);
         }
+        else if(userInput.equals("c")){
+            Menu();
+        }
     }
 
+    public static void Menu(){
+            System.out.println();
+            System.out.println("Disclaimers: ");
+            System.out.println("To play a card, input the card suit followed by its rank.");
+            System.out.println("For example: c9");
+            System.out.println();
+            System.out.println("Cards will be automatically drawn if player does not have any eligible cards to play");
+            System.out.println();
+            System.out.println("Commands:");
+            System.out.println("x = quit game");
+            System.out.println("s = restart game");
+            System.out.println();
+    }
 }
