@@ -1,5 +1,5 @@
-
 import java.util.Scanner;
+import java.util.*;
 
 public class GoBoom {
 
@@ -18,9 +18,12 @@ public class GoBoom {
             }
         }
         
+        if (turn==1){
+            Welcome();
+        }
+
         // Game starts.
         while(turn>0){ // This will be the tricks.
-
             if(!gameTurn.getCenter().emptyDeck()){ // Set the Lead Card and the Highest Value Card (at this stage of the game, both are the same).
                 gameTurn.setCurrentLeadCard(gameTurn.getCenter().getLeadCard());
                 gameTurn.setHighestValCard(gameTurn.getCenter().getLeadCard());
@@ -76,6 +79,19 @@ public class GoBoom {
                 }
                 turn++; // Add turn count.
             }
+        }
+    }
+
+    public static void Welcome(){
+        System.out.println("-- Welcome to Go Boom --");
+        System.out.print("Press 'c' to see commands: ");
+        Scanner input = new Scanner(System.in);
+        String command = input.nextLine();
+
+        if(command.equals("c")|| command.equals("C")){
+            Turn.Menu();
+            System.out.print("Press any key to play: ");
+            command = input.nextLine();
         }
     }
 }
