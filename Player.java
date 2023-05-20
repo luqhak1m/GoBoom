@@ -21,7 +21,7 @@ public class Player extends Deck{
     }
     
     public void setPlayerTurn(int n){
-        this.playerNum=n;
+        this.turn=n;
     }
 
     public int getPlayerNum(){
@@ -34,26 +34,5 @@ public class Player extends Deck{
 
     public int getPlayerScore(){
         return score;
-    }
-
-    private static int getFirstPlayerIndex(Card leadCard) {
-        char rank = leadCard.getNumber();
-        switch(rank){
-            case 'A': case '5': case '9': case 'K':{
-                return 1; // Player1 goes first
-            }
-            case '2': case '6': case 'X':{
-                return 2; // Player2 goes first
-            }
-            case '3': case '7': case 'J':{
-                return 3; // Player3 goes first
-            }
-            case '4': case '8': case 'Q':{
-                return 4; // Player4 goes first
-            }
-            default: {
-                return 0; // Default to Player1
-            }
-        }
     }
 }
