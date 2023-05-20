@@ -1,3 +1,4 @@
+
 import java.util.Scanner;
 import java.util.ArrayList;
 
@@ -51,6 +52,9 @@ public class Turn {
     }
     public Card getCurrentPlayedCard(){
         return currentPlayedCard;
+    }
+    public Card getHighestValCard(){
+        return highestValCard;
     }
     public Player getCurrentLeadPlayer(){
         return currentLeadPlayer;
@@ -141,7 +145,7 @@ public class Turn {
          for(int i=0; i<numOfPlayers; i++){
             for(Player player:players){
                 if(player.getPlayerNum()==i+1){
-                    System.out.print("Player " + players[i].getPlayerNum() + " = " + players[i].getPlayerScore()); // Print each player's deck
+                    System.out.print("Player" + player.getPlayerNum() + " = " + player.getPlayerScore()); // Print each player's deck
                 }
             }
 
@@ -154,33 +158,25 @@ public class Turn {
             }
 
         }
+        // System.out.print("Player"+getCurrentLeadPlayer().getPlayerNum()+" is now current the trick leader with ");getHighestValCard().printCurrentCard(); System.out.println();
     }
 
     public void playedCardMainMethod(int i, Player player, Deck center, String userInput){
         for(int j=0; j<player.getDeck().size(); j++){
             currentPlayedCard=player.getCardAtIndex(j); // Get the currently played card.
-            if(checkHigherVal(j, player, center, returnPlayedSuit(userInput), returnPlayedNum(userInput))){ // If the played card's value is bigger than lead card value.
-                setHighestValCard(currentPlayedCard);
-                setCurrentLeadPlayer(player);
+            if(currentPlayedCard.getSuit()==returnPlayedSuit(userInput) && currentPlayedCard.getNumber()==returnPlayedNum(userInput)){
+                if(i==0){ 
+                    setHighestValCard(currentPlayedCard);
+                }
+                center.addCard(currentPlayedCard);  
+                player.removeCardAtIndex(j);
+
+                if(currentPlayedCard.getValue()>highestValCard.getValue()){ // If the played card's value is bigger than lead card value.
+                    setHighestValCard(currentPlayedCard);
+                    setCurrentLeadPlayer(player);
+                }
             }
         }
-    }
-
-    public boolean checkHigherVal(int j, Player player, Deck center, char playedCardSuit, char playedCardNum){
-
-        if(currentPlayedCard.getSuit()==playedCardSuit && currentPlayedCard.getNumber()==playedCardNum){ // If the played card is valid.
-            center.addCard(currentPlayedCard);  
-            player.removeCardAtIndex(j);
-
-            if(currentPlayedCard.getValue()>highestValCard.getValue()){ // If the played card's value is bigger than lead card value.
-                return true;
-            }
-            else if(currentPlayedCard.getValue()<highestValCard.getValue()){
-                return false;
-            }
-            else{return false;}
-        }
-        else{return false;}
     }
 
     public static char returnPlayedSuit(String userInput){
@@ -274,22 +270,16 @@ public class Turn {
         else if(userInput.equals("s")){
             setMode(1);
         }
-        else if(userInput.equals("c")){
-            Menu();
-        }
     }
 
     public static void Menu(){
-            System.out.println();
-            System.out.println("Disclaimers: ");
-            System.out.println("To play a card, input the card suit followed by its rank.");
-            System.out.println("For example: c9");
-            System.out.println();
-            System.out.println("Cards will be automatically drawn if player does not have any eligible cards to play");
-            System.out.println();
-            System.out.println("Commands:");
-            System.out.println("x = quit game");
-            System.out.println("s = restart game");
-            System.out.println();
-    }
+        System.out.println();
+        System.out.println("Disclaimers: \nTo play a card, input the card suit followed by its rank.\nFor example: c9");
+        System.out.println();
+        System.out.println("Cards will be automatically drawn if player does not have any eligible cards to play");
+        System.out.println();
+        System.out.println("Commands:\nx = quit game\ns = restart game");
+        System.out.println();
+}
+
 }
