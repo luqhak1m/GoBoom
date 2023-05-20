@@ -1,5 +1,5 @@
+
 import java.util.Scanner;
-import java.util.*;
 
 public class GoBoom {
 
@@ -18,17 +18,18 @@ public class GoBoom {
             }
         }
         
-        if (turn==1){
-            Welcome();
-        }
-
         // Game starts.
         while(turn>0){ // This will be the tricks.
+
             if(!gameTurn.getCenter().emptyDeck()){ // Set the Lead Card and the Highest Value Card (at this stage of the game, both are the same).
                 gameTurn.setCurrentLeadCard(gameTurn.getCenter().getLeadCard());
                 gameTurn.setHighestValCard(gameTurn.getCenter().getLeadCard());
             }
 
+            if (turn==1){
+                Welcome();
+            }
+            
             for(int i=0; i<numOfPlayers; i++){ // For each trick's round.
                 for(Player player:gameTurn.getPlayers()){ // For each player in the players array.
                     if(player.getPlayerTurn()==i+1){ // Get player on current turn.
@@ -79,6 +80,7 @@ public class GoBoom {
                 }
                 turn++; // Add turn count.
             }
+
         }
     }
 
