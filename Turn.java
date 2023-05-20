@@ -2,7 +2,7 @@
 import java.util.Scanner;
 
 public class Turn {
-    Card currentLeadCard, currentPlayedCard, leadCenterDeck;
+    Card currentLeadCard, currentPlayedCard, highestValCard;
     Player currentLeadPlayer;
     int mode;
 
@@ -44,31 +44,33 @@ public class Turn {
 
     public void playedCardMainMethod(int i, Player player, Deck center, String userInput){
         for(int j=0; j<player.getDeck().size(); j++){
-            if(i+1!=1){
-                leadCenterDeck=center.getLeadCard(); // Get the lead card on center.
-            }
             currentPlayedCard=player.getCardAtIndex(j); // Get the currently played card.
-            if(checkHigherVal(j, currentLeadCard, currentPlayedCard, currentLeadPlayer, player, center, returnPlayedSuit(userInput), returnPlayedNum(userInput))){ // If the played card's value is bigger than lead card value.
-                currentLeadCard=currentPlayedCard;
-                currentLeadPlayer=player;
+            if(checkHigherVal(j, player, center, returnPlayedSuit(userInput), returnPlayedNum(userInput))){ // If the played card's value is bigger than lead card value.
+                // System.out.print(" Before currentPlayedCard: ");currentPlayedCard.printCurrentCard();
+                // System.out.print(" Before currentLeadCard: ");currentLeadCard.printCurrentCard();
+                setHighestValCard(currentPlayedCard);
+                setCurrentLeadPlayer(player);
+                // System.out.print(" After currentPlayedCard: ");currentPlayedCard.printCurrentCard();
+                // System.out.print(" After currentLeadCard: ");currentLeadCard.printCurrentCard();
             }
         }
     }
 
-    public static boolean checkHigherVal(int j, Card currentLeadCard, Card currentPlayedCard, Player currentLeadPlayer, Player player, Deck center, char playedCardSuit, char playedCardNum){
+    public boolean checkHigherVal(int j, Player player, Deck center, char playedCardSuit, char playedCardNum){
 
         if(currentPlayedCard.getSuit()==playedCardSuit && currentPlayedCard.getNumber()==playedCardNum){ // If the played card is valid.
             center.addCard(currentPlayedCard);  
             player.removeCardAtIndex(j);
 
-            if(currentPlayedCard.getValue()>currentLeadCard.getValue()){ // If the played card's value is bigger than lead card value.
+            if(currentPlayedCard.getValue()>highestValCard.getValue()){ // If the played card's value is bigger than lead card value.
                 return true;
             }
-            else{
+            else if(currentPlayedCard.getValue()<highestValCard.getValue()){
                 return false;
             }
+            else{return false;}
         }
-        return false;
+        else{return false;}
     }
 
     public static char returnPlayedSuit(String userInput){
@@ -83,15 +85,16 @@ public class Turn {
 
     public void setCurrentLeadCard(Card card){
         currentLeadCard=card;
+
     }
     public void setCurrentPlayedCard(Card card){
         currentPlayedCard=card;
     }
-    public void setLeadCenterDeck(Card card){
-        leadCenterDeck=card;
-    }
     public void setCurrentLeadPlayer(Player player){
         currentLeadPlayer=player;
+    }
+    public void setHighestValCard(Card card){
+        highestValCard=card;
     }
 
     public Card getCurrentLeadCard(){
@@ -99,9 +102,6 @@ public class Turn {
     }
     public Card getCurrentPlayedCard(){
         return currentPlayedCard;
-    }
-    public Card getLeadCenterDeck(){
-        return leadCenterDeck;
     }
     public Player getCurrentLeadPlayer(){
         return currentLeadPlayer;
@@ -182,5 +182,4 @@ public class Turn {
             mode=3;
         }
     }
-
 }
