@@ -59,53 +59,46 @@ public class GoBoom {
         }
                 
         int turn=1;
-        boolean stopGame=false;
         Scanner input = new Scanner(System.in);
 
         // Game starts.
         Turn gameTurn=new Turn();
-
+        for(Player player:players){
+            if(player.getPlayerTurn()==1){
+                gameTurn.setCurrentLeadPlayer(player);
+            }
+        }
+        
         while(turn>0){ // This will be the tricks.
-            for(int i=0; i<numOfPlayers; i++){ // This will be each trick's turn, and since there's four players there will only be 4 turns.
-                if(turn==1){
-                    for(Player player:players){
-                        if(player.getPlayerTurn()==i+1){ // Get player on current turn
-                            if(i+1==1){ // If it's the first round of the first trick, this will make the first player moves.
-                                System.out.print("At the beginning of a game. The first lead card ");
-                                gameTurn.setLeadCenterDeck(center.getLeadCard());gameTurn.getLeadCenterDeck().printCurrentCard();
-                                System.out.print(" is placed at the center. Player" + player.getPlayerNum() + " is the first player because of "); 
-                                gameTurn.getLeadCenterDeck().printCurrentCard();gameTurn.setCurrentLeadPlayer(player);gameTurn.setCurrentLeadCard(center.getLeadCard());
-                            }
-                            gameTurn.turn(i, input, player, center, mainDeck, turn, numOfPlayers, players);
-                        }
+            if(!center.emptyDeck()){
+                gameTurn.setCurrentLeadCard(center.getLeadCard());
+                gameTurn.setHighestValCard(center.getLeadCard());
+            }
+            for(int i=0; i<numOfPlayers; i++){
+                for(Player player:players){
+                    if(player.getPlayerTurn()==i+1){ // Get player on current turn
+                        gameTurn.turn(i, input, player, center, mainDeck, turn, numOfPlayers, players);
                     }
-                }
-                else if(turn>1){ // For trick > 1.
-                    for(Player player:players){
-                        if(i+1==1){ // If it's the first round of the new trick.
-                            if(gameTurn.currentLeadPlayer==player){ // Leader of previous trick will move first.
-                                gameTurn.turn(i, input, player, center, mainDeck, turn, numOfPlayers, players);
-                            }
-                        }
-                        else{ // If it's not the first round of the trick (2,3,4,...n).
-                            // Since the player with turn #1 is now different, we need to change for other as well.
-                            if(player.getPlayerTurn()==i+1){ 
-                                gameTurn.turn(i, input, player, center, mainDeck, turn, numOfPlayers, players);
-                            }
-                        }
-                    }
-                }
+                }    
             }
             System.out.println();
             System.out.println("*** Player " + gameTurn.getCurrentLeadPlayer().getPlayerNum() + " wins Trick #" + turn + " ***");
             center.getDeck().clear();
 
             // Change the remaining user's turn based on the previous trick winner.
-
-
+            for(int l=0; l<numOfPlayers; l++){
+                int currentPlayerNumber=(gameTurn.getCurrentLeadPlayer().getPlayerNum()+l)%4;
+                for(Player player:players){
+                    if(currentPlayerNumber==0){ // because 4%4==0 but we wanna make it ==4
+                        currentPlayerNumber=4;
+                    }
+                    if(player.getPlayerNum()==currentPlayerNumber){
+                        player.setPlayerTurn(l+1);
+                    }
+                }
+            }
             turn++;
         }
-        //gameplay
     }
 
     private static int getFirstPlayerIndex(Card leadCard) {
