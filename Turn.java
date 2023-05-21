@@ -161,11 +161,11 @@ public class Turn {
         // System.out.print("Player"+getCurrentLeadPlayer().getPlayerNum()+" is now current the trick leader with ");getHighestValCard().printCurrentCard(); System.out.println();
     }
 
-    public void playedCardMainMethod(int i, Player player, Deck center, String userInput){
+    public void playedCardMainMethod(int i, Player player, Deck center, String userInput, int turn){
         for(int j=0; j<player.getDeck().size(); j++){
             currentPlayedCard=player.getCardAtIndex(j); // Get the currently played card.
             if(currentPlayedCard.getSuit()==returnPlayedSuit(userInput) && currentPlayedCard.getNumber()==returnPlayedNum(userInput)){
-                if(i==0){ 
+                if(i==0 && turn!=1){ 
                     setHighestValCard(currentPlayedCard);
                 }
                 center.addCard(currentPlayedCard);  
@@ -262,7 +262,7 @@ public class Turn {
             userInput=input.next();
         }
         if(userInput.length()==2){
-            playedCardMainMethod(i, player, center, userInput);
+            playedCardMainMethod(i, player, center, userInput, turn);
         }
         else if(userInput.equals("x")){
             setMode(2);
