@@ -4,15 +4,13 @@
 
 No | ID         | Name                             | Contribution %    | Task descriptions
 -- | ---------- | -------------------------------- | ----------------- | --------------
-1  | 1211101583 | LUQMAN HAKIM BIN NOORAZMI        | 25%               |  Make each player’s turn and the trick’s turn align, make the highest-rank card wins the trick and make the winner of the trick leads the next card.
-2  | 1211104230 | NUR AISYAH NABILA BINTI NAHAR    | 25%               |  Make the first card from the deck the lead card, determine each of the player’s turn and deal seven (7) cards to each players.
-3  | 1211103165 | IZZATI ALIA BINTI INCIK GHAZALI  | 25%               |  Automatically check for card eligibility during each of the player’s turn, and automatically draw cards from the deck to the player’s hand if there is no eligible card.
-4  | 1211103128 | MUHAMMAD AJWAD BIN MOHAMAD A'SIM | 25%               |  Generate all 52 cards by creating a Deck and Card classes where each card holds a suit, number and value, and handling the video presentation.
+1  | 1211101583 | LUQMAN HAKIM BIN NOORAZMI        |  Make each player’s turn and the trick’s turn align, make the highest-rank card wins the trick and make the winner of the trick leads the next card.                     | 25%               
+2  | 1211104230 | NUR AISYAH NABILA BINTI NAHAR    |  Make the first card from the deck the lead card, determine each of the player’s turn and deal seven (7) cards to each players.                                          | 25%               
+3  | 1211103165 | IZZATI ALIA BINTI INCIK GHAZALI  |  Automatically check for card eligibility during each of the player’s turn, and automatically draw cards from the deck to the player’s hand if there is no eligible card.| 25%               
+4  | 1211103128 | MUHAMMAD AJWAD BIN MOHAMAD A'SIM |  Generate all 52 cards by creating a Deck and Card classes where each card holds a suit, number and value, and handling the video presentation.                          | 25%               
 
 
 ## B. Feature Completion
-
-Mark Y for complete, N for incomplete.
 
 No | Feature                                                                         | Completed (Y/N)
 -- | ------------------------------------------------------------------------------- | ---------------
@@ -27,8 +25,6 @@ No | Feature                                                                    
 
 
 ## C. Link to Video Presentation
-
-Upload your video presentation to your Google drive or YouTube, then paste the link below. Give your lab lecturer the permission to view the video.
 
 [Assignment Part 1 Presentation](https://drive.google.com/file/d/1yiHezs8HcpFpRDrPLLQSp7qDZZlIZt2M/view?usp=share_link)
 
