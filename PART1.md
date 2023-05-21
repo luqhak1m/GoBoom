@@ -2,7 +2,7 @@
 
 ## A. Member Contributions
 
-No | ID         | Name                             | Contribution %    | Task descriptions
+No | ID         | Name                             | Task descriptions | Contribution % 
 -- | ---------- | -------------------------------- | ----------------- | --------------
 1  | 1211101583 | LUQMAN HAKIM BIN NOORAZMI        |  Make each player’s turn and the trick’s turn align, make the highest-rank card wins the trick and make the winner of the trick leads the next card.                     | 25%               
 2  | 1211104230 | NUR AISYAH NABILA BINTI NAHAR    |  Make the first card from the deck the lead card, determine each of the player’s turn and deal seven (7) cards to each players.                                          | 25%               
