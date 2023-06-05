@@ -11,10 +11,12 @@ public class GoBoom {
         Turn gameTurn=new Turn(numOfPlayers, numOfCards); // New Turn object to handle the gameplay.
         Scanner input = new Scanner(System.in);
 
-        gameTurn.Welcome();
         // Game starts.
         while(trick>0){ // This will be the tricks.
-
+            
+            if(trick==1){
+                gameTurn.Welcome();
+            }
             Deck centerDeck=gameTurn.center;
             gameTurn.setLeadPlayer(); // Set the lead player
 
@@ -43,13 +45,16 @@ public class GoBoom {
 
             if(gameTurn.getMode()==1||gameTurn.getMode()==2){
                 if(gameTurn.getMode()==1){
+                    System.out.println();
                     System.out.println("Starting a new game...");
+                    System.out.println();
                     gameTurn=new Turn(numOfPlayers, numOfCards); // create new game
                     trick=1;
                     gameTurn.setMode(0);
                     continue;
                 }
                 else{
+                    System.out.println();
                     System.out.println("Thank You for playing!");
                     break;
                 }
