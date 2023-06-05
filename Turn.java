@@ -1,5 +1,8 @@
 
 import java.util.Scanner;
+
+import javax.lang.model.element.Element;
+
 import java.util.ArrayList;
 
 public class Turn {
@@ -106,26 +109,19 @@ public class Turn {
     
     public void turn(Scanner input, Player player, int numOfPlayers){
         // Print round details
-        printTurnDetails(numOfPlayers, center, mainDeck);
-        System.out.println("Turn: Player" + player.getPlayerNum());
+        printTurnDetails(numOfPlayers, center, mainDeck, player);
         
-        if(!center.emptyDeck()){
-            showEligibleCard(player, center, mainDeck);
-        }
         if(!checkEligibility(player)&&mainDeck.emptyDeck()){ // skip turn if no eligible card
             System.out.println("Main deck is EMPTY and player " + player.getPlayerNum() + " does not have any card to be played. Player " + player.getPlayerNum() + " skips.");
             return;
         }
 
-        System.out.println();System.out.print("[Player"+getCurrentLeadPlayer().getPlayerNum()+" is the current trick leader with ");getHighestValCard().printCurrentCard(); System.out.print("]"); System.out.println();
-
-        
         boolean validInput=false;
         while(!validInput){
 
             System.out.print(">"); 
             String userInput=input.next();
-            boolean help=false;
+            boolean invalidButDontBreak=false;
 
             switch (userInput) {
                 case "card":
@@ -147,9 +143,21 @@ public class Turn {
                 validInput=true;
                 break;
                 case "help":
-                help=true;
+                invalidButDontBreak=true;
                 Menu();
+                break;
+                case "draw":
+                if(!mainDeck.emptyDeck()){
+                    drawSingleCard(player);
+                }else{System.out.println("Main deck is empty.");}
+                invalidButDontBreak=true;
+                break;
+                case "details":
+                printTurnDetails(numOfPlayers, center, mainDeck, player);
+                invalidButDontBreak=true;
+                break;
             }
+
             if(userInput.length()==2 && checkPlayedCard(userInput)){
                 for(Card card:player.getDeck()){
                     if(userInput.equals(card.getInitial())){
@@ -159,11 +167,12 @@ public class Turn {
                 }
             }
 
-            if(!validInput&&!help){System.out.println("Invalid input my friend.");};
+            if(!validInput&&!invalidButDontBreak){System.out.println("Invalid input my friend.");};
         }
         
         if(mode==1||mode==2 || mode==3){
             if(mode==3){
+                System.out.println();
                 System.out.println("Turn Skipped.");
             }
             return;
@@ -187,19 +196,20 @@ public class Turn {
         }
     }
 
-    public void printTurnDetails(int numOfPlayers, Deck center, Deck mainDeck){ // Construct a new turn each round
+    public void printTurnDetails(int numOfPlayers, Deck center, Deck mainDeck, Player player){ // Construct a new turn each round
         System.out.println(); System.out.println("Trick #" + trickNumber); // Print trick number.
         
         // Print each player's deck
         for(int i=0; i<numOfPlayers; i++){
-            for(Player player:players){
-                if(player.getPlayerNum()==i+1){
-                    System.out.print("Player" + player.getPlayerNum() + ": "); 
-                    player.printDeck();
+            for(Player p:players){
+                if(p.getPlayerNum()==i+1){
+                    System.out.print("Player" + p.getPlayerNum() + ": "); 
+                    p.printDeck();
                 }
             }
         }
         
+        System.out.println();System.out.print("Note: Player"+getCurrentLeadPlayer().getPlayerNum()+" is the current trick leader with ");getHighestValCard().printCurrentCard();System.out.println();
         // Print the lead card
         System.out.println();System.out.print("Center: ");
         center.printDeck();
@@ -211,9 +221,9 @@ public class Turn {
         // Print the score
         System.out.println();
         for(int i=0; i<numOfPlayers; i++){
-            for(Player player:players){
-                if(player.getPlayerNum()==i+1){
-                    System.out.print("Player" + player.getPlayerNum() + " = " + player.getPlayerScore()); // Print each player's deck
+            for(Player p:players){
+                if(p.getPlayerNum()==i+1){
+                    System.out.print("Player" + p.getPlayerNum() + " = " + p.getPlayerScore()); // Print each player's deck
                 }
             }
             
@@ -226,6 +236,14 @@ public class Turn {
             }
             
         }
+
+        System.out.println("Turn: Player " + player.getPlayerNum());
+        System.out.println();
+        if(!center.emptyDeck()){
+            showEligibleCard(player, center, mainDeck);
+        }
+        System.out.println();
+
     }
 
     public boolean checkEligibility(Player player){ // If player has card that can be played
@@ -268,18 +286,13 @@ public class Turn {
         if(!hasEligibleCard){
             //player doesnt have eligible card, so need to draw from deck
             System.out.println("There is no eligible card");
-            
             while(mainDeck.getDeck().size()!=0){
-                Card drawCard = mainDeck.getCardAtIndex(0);
-                System.out.println(("Card drawn : " + drawCard.getSuit() + drawCard.getNumber()));
-                player.addCard(drawCard);
-                mainDeck.removeCardAtIndex(0);
+                Card drawCard=drawSingleCard(player);
                 
                 //check if the drawn cards is eligible or not
                 if(!center.emptyDeck()){
                     if(drawCard.getSuit() == (center.getLeadCard().getSuit()) || drawCard.getNumber()==center.getLeadCard().getNumber()){
                         System.out.println(("It is an eligible card : ") + drawCard.getSuit() + drawCard.getNumber());
-                        mode=1;
                         break;
                     }
                     else{
@@ -293,8 +306,17 @@ public class Turn {
                 System.out.println("No cards left in the deck!");
                 mode=4;
                 //break; 
-            }    
+            }
+            
         }  
+    }
+
+    private Card drawSingleCard(Player player){
+        Card drawCard = mainDeck.getCardAtIndex(0);
+        System.out.println(("Card drawn : " + drawCard.getSuit() + drawCard.getNumber()));
+        player.addCard(drawCard);
+        mainDeck.removeCardAtIndex(0);
+        return drawCard;
     }
 
     private int getFirstPlayerIndex(Card leadCard) {
@@ -324,7 +346,7 @@ public class Turn {
         System.out.println();
         System.out.println("Cards will be automatically drawn if player does not have any eligible cards to play");
         System.out.println();
-        System.out.println("Commands:\nx = quit game\ns = restart game\nskip = skip turn\nhelp = show menu");
+        System.out.println("Commands:\nx = quit game\ns = restart game\nskip = skip turn\nhelp = show menu\ndraw = draw a single card from the main deck\ndetails = show turn details");
         System.out.println();
     }
     
