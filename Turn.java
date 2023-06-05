@@ -1,8 +1,5 @@
 
 import java.util.Scanner;
-
-import javax.lang.model.element.Element;
-
 import java.util.ArrayList;
 
 public class Turn {
@@ -198,6 +195,7 @@ public class Turn {
 
     public void printTurnDetails(int numOfPlayers, Deck center, Deck mainDeck, Player player){ // Construct a new turn each round
         System.out.println(); System.out.println("Trick #" + trickNumber); // Print trick number.
+        System.out.println();
         
         // Print each player's deck
         for(int i=0; i<numOfPlayers; i++){
