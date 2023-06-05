@@ -1,10 +1,11 @@
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.ArrayList;
 
 public class Deck{
     private ArrayList<Card> deck=new ArrayList<>();
-    private Card leadCard;
+    static ArrayList<Card> original52Cards=new ArrayList<>();
 
     //constructor
     public Deck(ArrayList<Card> deck){
@@ -16,11 +17,16 @@ public class Deck{
         char[] numbers={'2', '3', '4', '5', '6', '7', '8', '9', 'X', 'J', 'Q', 'K', 'A'};
         char[] suits={'d', 'c', 'h', 's'};
         // char[] suits = {'♦', '♣', '♥', '♠'}; 
+        HashMap<Integer, String> cardInitial = new HashMap<>();
+        for(int k=0; k<13; k++){
+            cardInitial.put(k+1, Character.toString(numbers[k]));
+        }
         
-        for(char suit:suits){
-            for(int i=0;i<13;i++){
-                Card x=new Card(i+1, numbers[i], suit);
+        for(int i=0; i<suits.length; i++){
+            for(int j=0;j<numbers.length;j++){
+                Card x=new Card(j+1, numbers[j], suits[i], cardInitial);
                 deck.add(x);
+                original52Cards.add(x);
             }
         }
     }
@@ -29,16 +35,17 @@ public class Deck{
     public ArrayList<Card> getDeck(){
         return deck;
     }
+    // Return the original deck. 
+    public ArrayList<Card> getOriginalDeck(){
+        return original52Cards;
+    }
 
     // Print whole deck
     public void printDeck(){
         ArrayList<String> strDeck=new ArrayList<String>();
 
         for(Card card:this.getDeck()){
-            char suit=card.getSuit();
-            char number=card.getNumber();
-            String strCard=Character.toString(suit) + Character.toString(number);
-            strDeck.add(strCard);
+            strDeck.add(card.getInitial());
         }
         System.out.println(strDeck.toString());
     }
@@ -68,16 +75,9 @@ public class Deck{
         deck.add(card);
     }
 
-    // Set lead card
-    public void setLeadCard(Card card){
-        this.leadCard=card;
-    }
-
     // Check if deck is empty
     public boolean emptyDeck(){
-        if(deck.size()==0){
-            return true;
-        }
-        else{return false;}
+        if(deck.size()==0){return true;}
+        return false;
     }
 }
