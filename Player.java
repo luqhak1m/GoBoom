@@ -12,8 +12,8 @@ public class Player extends Deck{
         this.score=0;
     }
 
-    public void setPlayersScore(int n){
-        this.score=n;
+    public void addPlayersScore(){
+        this.score++;
     }
 
     public void setPlayerNum(int n){
