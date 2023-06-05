@@ -1,12 +1,18 @@
 
+import java.util.HashMap;
+
 public class Card{
     private int value;
     private char number, suit;
+    private String initial;
 
-    public Card(int value, char number, char suits){
+    public Card(int value, char number, char suits, HashMap<Integer, String> cardInitial){
         this.number=number;
         this.suit=suits;
         this.value=value;
+        
+        String tempCard=String.valueOf(suits)+cardInitial.get(value);
+        this.initial=tempCard;
     }
 
     public void setValue(int n){
@@ -27,11 +33,16 @@ public class Card{
     public char getSuit(){
         return suit;
     }
+    public String getInitial(){
+        return initial;
+    }
 
     public void printCurrentCardDetailed(){
         System.out.println("value is : " + this.getValue() + ", number is: " + this.getNumber() + ", suit is  : " + this.getSuit());
     }
     public void printCurrentCard(){
-        System.out.printf("%c%c", this.getSuit(), this.getNumber());
+        System.out.printf(this.initial);
     }
+
+    
 }
