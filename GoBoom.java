@@ -64,6 +64,8 @@ public class GoBoom {
             } 
             
             // // End of 4 Rounds.
+            Player.getTrickLeaders().add(gameTurn.getCurrentLeadPlayer());
+            // System.out.println(Player.getTrickLeaders());
 
             if(gameTurn.getMode()==1||gameTurn.getMode()==2){
                 if(gameTurn.getMode()==1){
