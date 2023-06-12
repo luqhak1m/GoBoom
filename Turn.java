@@ -1,9 +1,11 @@
 
 import java.util.Scanner;
-import java.util.ArrayList;
+import java.util.TreeSet;
+import java.util.HashMap;
+import java.util.LinkedList;
 
 public class Turn {
-    Deck mainDeck, center;
+    mainDeck main, center;
     Player players[];
     
     Card currentPlayedCard, highestValCard;
@@ -12,14 +14,8 @@ public class Turn {
     static int mode=0;
     // 1=Start new game, 2=Exit, 3=Skip turn
     
-    public void setMainDeck(ArrayList<Card> deck){
-        mainDeck=new Deck(deck);
-    }
     public void setPlayers(){
         players=new Player[4];
-    }
-    public void setCenter(ArrayList<Card> deck){
-        center=new Deck(deck);
     }
     public void setTrickNum(int n){
         trickNumber=n;
@@ -28,10 +24,10 @@ public class Turn {
         roundNumber=n;
     }
     
-    public Deck getMainDeck(){
-        return mainDeck;
+    public mainDeck getMainDeck(){
+        return main;
     }
-    public Deck getCenter(){
+    public mainDeck getCenter(){
         return center;
     }
     public Player[] getPlayers(){
@@ -72,43 +68,39 @@ public class Turn {
     public Turn(int numOfPlayers, int numOfCards){
 
         // Two empty ArrayLists to be passed on to the two Deck objects constructor (mainDeck and center).
-        ArrayList<Card> deck=new ArrayList<>();
-        ArrayList<Card> emptyDeck=new ArrayList<>();
-
-
-        setMainDeck(deck); 
-        setCenter(emptyDeck);
+        main=new mainDeck(new LinkedList<Card>());
+        center=new mainDeck(new LinkedList<Card>());
+        
+        main.generateCard();
         setPlayers(); // Create an array of players (four players).
 
-        mainDeck.generateCards(); // Generate all of the card's Suit, Number and Value.
-        mainDeck.shuffleDeck(); // Shuffle the mainDeck
+        main.shuffleDeck(); // Shuffle the mainDeck
 
-        Card leadMainDeck=mainDeck.removeCardAtIndex(0); // Take the first card from the deck.
+        Card leadMainDeck=main.removeLeadCard(); // Take the first card from the deck.
         center.addCard(leadMainDeck); // Make it the lead card.
 
         for (int i=0; i<numOfPlayers; i++) {
-            ArrayList<Card> playerCards = new ArrayList<>(); // Arraylist for each player.
+            TreeSet<Card> playersCard=new TreeSet<Card>(); // Arraylist for each player.
 
             // Add cards to each player's deck.
             for (int j = 0; j < numOfCards; j++){
-                Card cardToBeAdded=mainDeck.getCardAtIndex(0);
-                playerCards.add(cardToBeAdded);
-                mainDeck.removeCardAtIndex(0);
+                Card cardToBeAdded=main.removeLeadCard();
+                playersCard.add(cardToBeAdded);
             }
             int currentPlayerNumber=(getFirstPlayerIndex(center.getLeadCard())+i)%4; // To determine each player's turn.
             
             if(currentPlayerNumber==0){ 
                 currentPlayerNumber=4;
             }
-            players[i] = new Player(currentPlayerNumber, playerCards, i+1); // The players constructor.
+            players[i] = new Player(currentPlayerNumber, playersCard, i+1); // The players constructor.
         }
     };
     
     public void turn(Scanner input, Player player, int numOfPlayers){
         // Print round details
-        printTurnDetails(numOfPlayers, center, mainDeck, player);
+        printTurnDetails(numOfPlayers, center, main, player);
         
-        if(!checkEligibility(player)&&mainDeck.emptyDeck()){ // skip turn if no eligible card
+        if(!checkEligibility(player)&&main.emptyDeck()){ // skip turn if no eligible card
             System.out.println("Main deck is EMPTY and player " + player.getPlayerNum() + " does not have any card to be played. Player " + player.getPlayerNum() + " skips.");
             return;
         }
@@ -136,21 +128,27 @@ public class Turn {
                 validInput=true;
                 break;
                 case "skip":
-                this.setMode(3);
-                validInput=true;
+                if(roundNumber==1){
+                    System.out.println("You are the trick leader, you cannot skip this turn.");
+                    invalidButDontBreak=true;
+                }
+                else{
+                    this.setMode(3);
+                    validInput=true;
+                }
                 break;
                 case "help":
                 invalidButDontBreak=true;
                 Menu();
                 break;
                 case "draw":
-                if(!mainDeck.emptyDeck()){
+                if(!main.emptyDeck()){
                     drawSingleCard(player);
                 }else{System.out.println("Main deck is empty.");}
                 invalidButDontBreak=true;
                 break;
                 case "details":
-                printTurnDetails(numOfPlayers, center, mainDeck, player);
+                printTurnDetails(numOfPlayers, center, main, player);
                 invalidButDontBreak=true;
                 break;
             }
@@ -172,6 +170,7 @@ public class Turn {
                 System.out.println();
                 System.out.println("Turn Skipped.");
             }
+            mode=0;
             return;
         }
         playedCardMainMethod(player); 
@@ -193,7 +192,7 @@ public class Turn {
         }
     }
 
-    public void printTurnDetails(int numOfPlayers, Deck center, Deck mainDeck, Player player){ // Construct a new turn each round
+    public void printTurnDetails(int numOfPlayers, mainDeck center, mainDeck mainDeck, Player player){ // Construct a new turn each round
         System.out.println(); System.out.println("Trick #" + trickNumber); // Print trick number.
         System.out.println();
         
@@ -221,7 +220,7 @@ public class Turn {
         for(int i=0; i<numOfPlayers; i++){
             for(Player p:players){
                 if(p.getPlayerNum()==i+1){
-                    System.out.print("Player" + p.getPlayerNum() + " = " + p.getPlayerScore()); // Print each player's deck
+                    System.out.print("Player" + p.getPlayerNum() + " = " + p.getCollectedScore()); // Print each player's deck
                 }
             }
             
@@ -236,8 +235,8 @@ public class Turn {
         }
 
         System.out.println("Turn: Player " + player.getPlayerNum());
-        System.out.println();
         if(!center.emptyDeck()){
+            System.out.println();
             showEligibleCard(player, center, mainDeck);
         }
         System.out.println();
@@ -267,7 +266,7 @@ public class Turn {
         return false;
     }
 
-    public void showEligibleCard(Player player, Deck center, Deck mainDeck){
+    public void showEligibleCard(Player player, mainDeck center, mainDeck mainDeck){
         boolean hasEligibleCard = false;
         for (Card card : player.getDeck()){
             if(!center.emptyDeck()){
@@ -310,10 +309,9 @@ public class Turn {
     }
 
     private Card drawSingleCard(Player player){
-        Card drawCard = mainDeck.getCardAtIndex(0);
+        Card drawCard = main.removeLeadCard();
         System.out.println(("Card drawn : " + drawCard.getSuit() + drawCard.getNumber()));
         player.addCard(drawCard);
-        mainDeck.removeCardAtIndex(0);
         return drawCard;
     }
 
@@ -364,5 +362,15 @@ public class Turn {
         System.out.print("Press enter to play: ");
         String command = input.nextLine();
 
+
+    }
+
+    public void countScore(Player player){
+        HashMap<Character, Integer> cardScore=Card.getCardScore();
+        for(Card c:player.getDeck()){
+            char num=c.getNumber();
+            player.setPlayersScore(cardScore.get(num));
+        }
+        System.out.println("Player " + player.getPlayerNum() + "'s score is " + player.getPlayerScore());
     }
 }
