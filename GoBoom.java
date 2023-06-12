@@ -49,7 +49,8 @@ public class GoBoom {
                     if(player.getPlayerTurn()==currentRoundNumber){ // Get player on current round.
                         gameTurn.turn(input, player, numOfPlayers);
                         if(player.emptyDeck()){
-                            System.out.println("Player " + player.getPlayerNum() + "Wins!");
+                            System.out.println();
+                            System.out.println("Player " + player.getPlayerNum() + " Wins!");
                             System.out.println();
                             for(Player p:gameTurn.players){
                                 gameTurn.countScore(p);
