@@ -1,4 +1,5 @@
 
+import java.util.HashMap;
 import java.util.Scanner;
 
 public class GoBoom {
@@ -11,18 +12,28 @@ public class GoBoom {
         Turn gameTurn=new Turn(numOfPlayers, numOfCards); // New Turn object to handle the gameplay.
         Scanner input = new Scanner(System.in);
 
+        HashMap<Integer, Integer> playersScore=new HashMap<Integer, Integer>();
+        for(int i=1; i<=4; i++){
+            playersScore.put(i, 0);
+        }
+
+        gameTurn.Welcome();
         // Game starts.
         while(trick>0){ // This will be the tricks.
-            
-            if(trick==1){
-                gameTurn.Welcome();
-            }
-            Deck centerDeck=gameTurn.center;
+        
+            mainDeck centerDeck=gameTurn.center;
             gameTurn.setLeadPlayer(); // Set the lead player
 
             if(!centerDeck.emptyDeck()){ // Set the Lead Card and the Highest Value Card (at this stage of the game, both are the same).
                 Card centerLeadCard=centerDeck.getLeadCard();
                 gameTurn.setHighestValCard(centerLeadCard);
+            }
+
+            if(trick==1){
+                for(Player p:gameTurn.getPlayers()){
+                    int currentPlayerScore=playersScore.get(p.getPlayerNum());
+                    p.addCollectedScore(currentPlayerScore);
+                }   
             }
 
             // // This is the rounds.
@@ -37,6 +48,17 @@ public class GoBoom {
                 for(Player player:gameTurn.getPlayers()){ // For each player in the players array.
                     if(player.getPlayerTurn()==currentRoundNumber){ // Get player on current round.
                         gameTurn.turn(input, player, numOfPlayers);
+                        if(player.emptyDeck()){
+                            System.out.println("Player " + player.getPlayerNum() + "Wins!");
+                            System.out.println();
+                            for(Player p:gameTurn.players){
+                                gameTurn.countScore(p);
+                                int updatedScore=playersScore.get(p.getPlayerNum())+p.getPlayerScore();
+                                playersScore.put(p.getPlayerNum(),updatedScore);
+                            }
+                            gameTurn.setMode(1);
+                            break;
+                        }
                     }
                 }  
             } 
@@ -45,9 +67,7 @@ public class GoBoom {
 
             if(gameTurn.getMode()==1||gameTurn.getMode()==2){
                 if(gameTurn.getMode()==1){
-                    System.out.println();
-                    System.out.println("Starting a new game...");
-                    System.out.println();
+                    System.out.println();System.out.println("Starting a new game...");System.out.println();
                     gameTurn=new Turn(numOfPlayers, numOfCards); // create new game
                     trick=1;
                     gameTurn.setMode(0);
@@ -55,12 +75,11 @@ public class GoBoom {
                 }
                 else{
                     System.out.println();
-                    System.out.println("Thank You for playing!");
+                    System.out.println("Game has ended. Thank You for playing!");
                     break;
                 }
             }
 
-            gameTurn.getCurrentLeadPlayer().addPlayersScore(); //Add trick winner's score
             System.out.println();System.out.println("*** Player " + gameTurn.getCurrentLeadPlayer().getPlayerNum() + " wins Trick #" + gameTurn.getTrickNum() + " ***"); // Show which player wins the round.
             gameTurn.getCenter().getDeck().clear(); // Clear the center deck for new trick.
 
@@ -77,6 +96,7 @@ public class GoBoom {
                 }
             }
             trick++; // Add turn count.
+            
         }   
     }
 }
