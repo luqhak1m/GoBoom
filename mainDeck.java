@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.io.*;
 
 public class mainDeck implements deckTemplate<LinkedList<Card>> {
 
@@ -74,6 +75,20 @@ public class mainDeck implements deckTemplate<LinkedList<Card>> {
             return true;
         }
         return false;
+    }
+
+    //save latest main deck
+    public void saveMainDeck(String filename) {
+        try (PrintWriter writer = new PrintWriter(new FileWriter(filename))) {
+            for (Card card : deck) {
+                //writer.println(card.getValue()+ ":" + card.getNumber() + ":" + card.getSuit());
+                writer.println(card.getSuit() + ":" + card.getNumber());
+            }
+            writer.close();
+            System.out.println("Deck written to file successfully.");
+        } catch (IOException e) {
+            System.out.println("Error saving deck: " + e.getMessage());
+        }
     }
     
 }
