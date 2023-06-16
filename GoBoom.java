@@ -1,6 +1,6 @@
-
 import java.util.HashMap;
 import java.util.Scanner;
+import java.io.*;
 
 public class GoBoom {
 
@@ -52,6 +52,15 @@ public class GoBoom {
                             System.out.println();
                             System.out.println("Player " + player.getPlayerNum() + " Wins!");
                             System.out.println();
+
+                            try {
+                                FileWriter w = new FileWriter("roundWinner.txt", true);
+                                w.write(String.valueOf(player.getPlayerNum()));
+                                w.close();
+                            } catch (IOException e) {
+                                System.out.println("An error occurred while saving round #" +currentRoundNumber+ "winner.");
+                                e.printStackTrace();
+                            }
                             for(Player p:gameTurn.players){
                                 gameTurn.countScore(p);
                                 int updatedScore=playersScore.get(p.getPlayerNum())+p.getPlayerScore();
@@ -76,7 +85,7 @@ public class GoBoom {
                     gameTurn.setMode(0);
                     continue;
                 }
-                else{
+                else if (gameTurn.getMode() == 2){
                     System.out.println();
                     System.out.println("Game has ended. Thank You for playing!");
                     break;
@@ -99,7 +108,7 @@ public class GoBoom {
                 }
             }
             trick++; // Add turn count.
-            
-        }   
+        }
     }
 }
+
