@@ -1,4 +1,4 @@
-
+import java.io.*;
 import java.util.ArrayList;
 import java.util.TreeSet;
 
@@ -45,5 +45,20 @@ public class Player extends subDeck{
     }
     public static ArrayList<Player> getTrickLeaders(){
         return trickLeaders;
+    }
+
+    //save ALL trick leaders for EVERY round
+    public void saveTrickLeaders(String fileName, ArrayList<Player> trickLeaders) {
+        try {
+            FileWriter writer = new FileWriter(fileName);
+            for (Player player : trickLeaders) {
+                writer.write(player.getPlayerNum() + "\n");
+            }
+            writer.close();
+            System.out.println("Trick leaders saved to " + fileName);
+        } catch (IOException e) {
+            System.out.println("An error occurred while saving the trick leaders.");
+            e.printStackTrace();
+        }
     }
 }
