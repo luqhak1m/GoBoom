@@ -432,27 +432,33 @@ public class Turn {
             }
 
             boolean doesPlayerHaveTheInputtedCardQuestionMark=false;
+            boolean doesPlayerHaveTheInputtedCardQuestionMark2=false;
             if(userInput.length()==2){
                 if(checkPlayedCard(userInput)){
                     for(Card card:player.getDeck()){
                         if(userInput.equals(card.getInitial())){
                             validInput=true;
                             doesPlayerHaveTheInputtedCardQuestionMark=true;
+                            doesPlayerHaveTheInputtedCardQuestionMark2=true;
                             currentPlayedCard=card;
                             break;
                         }
                     }
                 }
-                for(Card card:player.getDeck()){
-                    if(userInput.equals(card.getInitial())){
-                        invalidButDontBreak=true;
-                        doesPlayerHaveTheInputtedCardQuestionMark=true;
-                        System.out.println("You cannot play this card! Choose other card!");
-                        break;
+                
+                if(!doesPlayerHaveTheInputtedCardQuestionMark){
+                    for(Card card:player.getDeck()){
+                        if(userInput.equals(card.getInitial())){
+                            invalidButDontBreak=true;
+                            doesPlayerHaveTheInputtedCardQuestionMark=true;
+                            doesPlayerHaveTheInputtedCardQuestionMark2=true;
+                            System.out.println("You cannot play this card! Choose other card!");
+                            break;
+                        }
                     }
                 }
 
-                if(!doesPlayerHaveTheInputtedCardQuestionMark){
+                if(!doesPlayerHaveTheInputtedCardQuestionMark2&&!doesPlayerHaveTheInputtedCardQuestionMark2){
                     for(Card card:mainDeck.original52Cards){
                         if(userInput.equals(card.getInitial())){
                             invalidButDontBreak=true;
