@@ -431,17 +431,18 @@ public class Turn {
                 invalidButDontBreak = true;
             }
 
+            boolean doesPlayerHaveTheInputtedCardQuestionMark=false;
             if(userInput.length()==2){
                 if(checkPlayedCard(userInput)){
                     for(Card card:player.getDeck()){
                         if(userInput.equals(card.getInitial())){
                             validInput=true;
+                            doesPlayerHaveTheInputtedCardQuestionMark=true;
                             currentPlayedCard=card;
                             break;
                         }
                     }
                 }
-                boolean doesPlayerHaveTheInputtedCardQuestionMark=false;
                 for(Card card:player.getDeck()){
                     if(userInput.equals(card.getInitial())){
                         invalidButDontBreak=true;
