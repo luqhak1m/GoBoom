@@ -13,7 +13,9 @@ public class Player extends subDeck{
         this.playerNum=playerNum;
         this.score=0;
     }
-
+    public void resetPlayersScore(){
+        this.score=0;
+    }
     public void setPlayersScore(int n){
         this.score+=n;
     }
