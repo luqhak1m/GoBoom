@@ -217,11 +217,11 @@ public class GoboomGUI extends Application{   // inheritance
     this.mainThread = mainThread;
   }
 
-  private void startNewGame(){
-    GoBoom newGame = new GoBoom();
-    //newGame.getClass();
-    newGame.playGame();
-  }
+  // private void startNewGame(){
+  //   GoBoom newGame = new GoBoom();
+  //   newGame.getClass();
+  //   newGame.playGame();
+  // }
  
 
     
