@@ -348,6 +348,7 @@ public class Turn {
     }
     
     public void turn(Scanner input, Player player, int numOfPlayers){
+        mode=0;
         // Print round details
         printTurnDetails(numOfPlayers, center, main, player);
         
