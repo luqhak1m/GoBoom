@@ -247,7 +247,6 @@ public class Turn {
                 System.out.println();
                 System.out.println("Turn Skipped.");
             }
-            mode=0;
             return;
         }
         playedCardMainMethod(player); 
