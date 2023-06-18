@@ -43,5 +43,5 @@ No | Feature                                                                    
 
 ## D. Link to Part 2 GitHub Repo
 
-https://link_to_your_GitHub_repo
+[Part 2](https://github.com/luqhak1m/GoBoom.git)https://github.com/luqhak1m/GoBoom.git
 
