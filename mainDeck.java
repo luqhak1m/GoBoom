@@ -90,5 +90,9 @@ public class mainDeck implements deckTemplate<LinkedList<Card>> {
             System.out.println("Error saving deck: " + e.getMessage());
         }
     }
+
+    public void clearDeck() {
+        deck.clear();
+    }
     
 }
