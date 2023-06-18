@@ -150,6 +150,154 @@ public class Turn {
         }
     }
 
+    public static void removeSpaces(String[] array) {
+        for (int i = 0; i < array.length; i++) {
+            String originalString = array[i];
+            String modifiedString = originalString.replaceAll(" ", "");
+            array[i] = modifiedString;
+        }
+    }
+
+    //load Decks
+    public void loadPlayerDecks(){
+        String delimiter = ",";
+
+        for (int i=0; i<4; i++) {
+            String fileName = "player" + (i+1) + "Deck.txt";
+            TreeSet<Card> playersCard=new TreeSet<Card>(); // Arraylist for each player.
+
+            try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
+                String line = reader.readLine();
+
+                if (line != null) {
+                    String[] elements = line.split(delimiter);
+
+                    // Because there are one extra null element in the elements, we need to remove the extra null element
+                    // Create a new array with size - 1
+                    String[] newArray = new String[elements.length - 1];
+
+                    // Copy all elements except the last one
+                    System.arraycopy(elements, 0, newArray, 0, elements.length - 1);
+                    removeSpaces(newArray);
+
+                    for (int j = 0; j < newArray.length; j++) {
+
+                        playersCard.add(addLoadedCard(newArray[j], fileName)); // add cards to each player's deck
+                        // System.out.println("Added card " + newArray[j]);
+                    }
+                    // players[i] = new Player(i+1, playersCard, players[i].getPlayerTurn()); // to set player's turn
+
+                    // int playerNum = 0;
+                    // switch (i) {
+                    //     case 0:
+                    //     playerNum = 3; 
+                    //     break;
+                    //     case 1:
+                    //     playerNum = 2; 
+                    //     break;
+                    //     case 2:
+                    //     playerNum = 3; 
+                    //     break;
+                    //     case 3:
+                    //     playerNum = 0; 
+                    //     break;
+                    // }
+                    
+                    players[i].setDeck(playersCard);
+                    System.out.println("");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        
+    }
+
+    //load center deck
+    public void loadCenterDeck() {
+        center.clearDeck();
+        String fileName = "centerDeck.txt";
+
+        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                System.out.print(line + "|");
+                // add card into the arraylist, one by one
+                // addLoadedCard(line, fileName);
+                center.addCard(addLoadedCard(line, fileName));
+            }
+            System.out.print("\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //load main deck
+    public void loadMainDeck() {
+        
+        main.clearDeck();
+        String fileName = "mainDeck.txt";
+        String excludedCharacter = ":";
+
+        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                line = line.replace(excludedCharacter, "");
+                System.out.print(line + "|");
+                // add card into the arraylist, one by one
+                // addLoadedCard(line, fileName);
+                main.addCard(addLoadedCard(line, fileName));
+            }
+            // System.out.print("\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public Card addLoadedCard(String card, String fileName) {
+        int indexNum = 1;
+        int indexSuit = 0;
+
+        char num = card.charAt(indexNum);
+        char suit = card.charAt(indexSuit);
+        
+        int intNum = checkIntNum(num);
+        // System.out.println(num+""+suit);
+
+        HashMap<Integer, String> cardInitial = new HashMap<>();
+        cardInitial.put(intNum, Character.toString(num));
+
+        Card x = new Card(intNum, num, suit, cardInitial);
+        
+        return x;
+    }
+
+    //load .txt file with single line, no list
+    public void loadDetails(String fileName) {
+        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+            String line = br.readLine();
+            if (line != null) {
+                int intLine = Integer.parseInt(line);
+                switch (fileName) {
+                    case "currentPlayer.txt":
+                    // players[intLine].setPlayerTurn(1);
+                    break;
+                    case "trickLeaders.txt":
+                    setCurrentLeadPlayer(players[intLine]);
+                    //System.out.println("current trick leader is Player " + intLine);
+                    break;
+                    case "trickNum.txt":
+                    setTrickNum(intLine);
+                    break;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     // public void saveLatestTrickLeader(String filename) {
     //     try{
     //         FileWriter w = new FileWriter("currentTrickLeader.txt", true);
@@ -225,6 +373,17 @@ public class Turn {
                 player.saveTrickLeaders("trickLeaders.txt", Player.getTrickLeaders());
                 validInput=true;
                 invalidButDontBreak=true;
+                System.exit(0);
+                break;
+                case "resume":
+                loadDetails("currentPlayer.txt");
+                loadPlayerDecks();
+                loadCenterDeck();
+                loadMainDeck();
+                //loadDetails("trickLeaders.txt");
+                loadDetails("trickNum.txt");
+                // printTurnDetails(4, center, main, player);
+                invalidButDontBreak = true;
                 break;
             }
 
@@ -252,7 +411,6 @@ public class Turn {
         playedCardMainMethod(player); 
     }
 
-    
     public void playedCardMainMethod(Player player){
             if(roundNumber==1 && trickNumber!=1){  // If first trick of the first round (because the original value for highest value card on the trick is NULL)
                 setHighestValCard(currentPlayedCard);
@@ -340,6 +498,7 @@ public class Turn {
         else if(center.emptyDeck()&&getRoundNum()==1){return true;}
         return false;
     }
+
     public boolean checkPlayedCard(String userInput){ // If player has card that can be played
         if(!center.emptyDeck()){
             if(userInput.charAt(0)==center.getLeadCard().getSuit() || userInput.charAt(1)==center.getLeadCard().getNumber()){
@@ -467,5 +626,52 @@ public class Turn {
             System.out.println("An error occurred while saving the player's score.");
             e.printStackTrace();
         }
+    }
+
+    public int checkIntNum(int num){
+        int intNum = 0;
+
+        switch (num) {
+            case '2':
+            intNum = 1;
+            break;
+            case '3':
+            intNum = 2;
+            break;
+            case '4':
+            intNum = 3;
+            break;
+            case '5':
+            intNum = 4;
+            break;
+            case '6':
+            intNum = 5;
+            break;
+            case '7':
+            intNum = 6;
+            break;
+            case '8':
+            intNum = 7;
+            break;
+            case '9':
+            intNum = 8;
+            break;
+            case 'X':
+            intNum = 9;
+            break;
+            case 'J':
+            intNum = 10;
+            break;
+            case 'Q':
+            intNum = 11;
+            break;
+            case 'K':
+            intNum = 12;
+            break;
+            case 'A':
+            intNum = 13;
+            break;
+        }
+        return intNum;
     }
 }
