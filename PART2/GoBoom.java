@@ -84,6 +84,9 @@ public class GoBoom {
                     gameTurn=new Turn(numOfPlayers, numOfCards); // create new game
                     trick=1;
                     gameTurn.setMode(0);
+                    for(Player player:gameTurn.getPlayers()){
+                        player.resetPlayersScore();
+                    }
                     continue;
                 }
                 else if (gameTurn.getMode() == 2){
