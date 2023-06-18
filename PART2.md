@@ -6,7 +6,7 @@ No | ID         | Name | Task descriptions | Contribution %
 -- | ---------- | ---- | ----------------- | --------------
 1  | 1211101583 | LUQMAN HAKIM BIN NOORAZMI        | Created the save and load functions for the game | 25%               
 2  | 1211104230 | NUR AISYAH NABILA BINTI NAHAR    | Created the save and load functions for the game | 25%               
-3  | 1211103165 | IZZATI ALIA BINTI INCIK GHAZALI  | | 25%               
+3  | 1211103165 | IZZATI ALIA BINTI INCIK GHAZALI  | Created the draw function and created partial GUI | 25%               
 4  | 1211103128 | MUHAMMAD AJWAD BIN MOHAMAD A'SIM | | 25%  
 
 ## B. Part 1 Feature Completion (Latest)
