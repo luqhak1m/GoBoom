@@ -1,4 +1,3 @@
-
 import java.util.HashMap;
 
 public class Card implements Comparable<Card>{
@@ -63,6 +62,10 @@ public class Card implements Comparable<Card>{
     public void printCurrentCardDetailed(){
         System.out.println("value is : " + this.getValue() + ", number is: " + this.getNumber() + ", suit is  : " + this.getSuit());
     }
+    public String getCurrentCard(){
+        return this.initial;
+    }
+
     public void printCurrentCard(){
         System.out.printf(this.initial);
     }
@@ -76,6 +79,4 @@ public class Card implements Comparable<Card>{
             return Integer.compare(this.value, card2.value);
         }
     }
-
-    
 }
