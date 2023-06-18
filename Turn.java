@@ -17,8 +17,8 @@ public class Turn {
     public void setPlayers(){
         players=new Player[4];
     }
-    public void setTrickNum(int n){
-        trickNumber=n;
+    public void setTrickNum(int trickNum){
+        trickNumber=trickNum;
     }
     public void setRoundNum(int n){
         roundNumber=n;
@@ -136,6 +136,21 @@ public class Turn {
         }
     }
 
+    // Save lead card for the latest trick
+    public void saveLeadCard(String filename) {
+        try {
+            FileWriter w = new FileWriter(filename);
+            Card leadCard = getHighestValCard(); // Get the lead card
+            String leadCardString = leadCard.getCurrentCard(); // Convert the lead card to a string
+            w.write(String.valueOf(leadCardString)); // Save the string representation of the lead card
+            w.close();   
+        } catch (IOException e) {
+            System.out.println("An error occurred while saving the lead card.");
+            e.printStackTrace();
+        }
+    }
+
+
     //save the trick number
     public void saveTrickNum(String filename) {
         try {
@@ -185,25 +200,7 @@ public class Turn {
                         playersCard.add(addLoadedCard(newArray[j], fileName)); // add cards to each player's deck
                         // System.out.println("Added card " + newArray[j]);
                     }
-                    // players[i] = new Player(i+1, playersCard, players[i].getPlayerTurn()); // to set player's turn
-
-                    // int playerNum = 0;
-                    // switch (i) {
-                    //     case 0:
-                    //     playerNum = 3; 
-                    //     break;
-                    //     case 1:
-                    //     playerNum = 2; 
-                    //     break;
-                    //     case 2:
-                    //     playerNum = 3; 
-                    //     break;
-                    //     case 3:
-                    //     playerNum = 0; 
-                    //     break;
-                    // }
-                    
-                    players[i].setDeck(playersCard);
+                    players[i] = new Player(i+1, playersCard, players[i].getPlayerTurn()); // to set player's turn
                     System.out.println("");
                 }
             } catch (IOException e) {
@@ -231,6 +228,32 @@ public class Turn {
             e.printStackTrace();
         }
     }
+
+    // Load .txt file with different types of details
+    public void loadDetails(String fileName) {
+        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+            String line = br.readLine();
+            if (line != null) {
+                switch (fileName) {
+                    case "leadCard.txt":
+                        setHighestValCard(addLoadedCard(line, fileName));
+                        break;
+                    case "currentPlayer.txt":
+                        int currentPlayerIndex = Integer.parseInt(line);
+                        setCurrentLeadPlayer(players[currentPlayerIndex - 1]);
+                        break;
+                    case "trickNum.txt":
+                        int trickNumber = Integer.parseInt(line);
+                        setTrickNum(trickNumber);
+                        System.out.println(trickNumber);
+                        break;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     //load main deck
     public void loadMainDeck() {
@@ -273,24 +296,39 @@ public class Turn {
         return x;
     }
 
-    //load .txt file with single line, no list
-    public void loadDetails(String fileName) {
+    // Load .txt file with a single line containing an integer value
+    public void loadCurrentPlayer(String fileName) {
         try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
             String line = br.readLine();
             if (line != null) {
-                int intLine = Integer.parseInt(line);
-                switch (fileName) {
-                    case "currentPlayer.txt":
-                    // players[intLine].setPlayerTurn(1);
-                    break;
-                    case "trickLeaders.txt":
-                    setCurrentLeadPlayer(players[intLine]);
-                    //System.out.println("current trick leader is Player " + intLine);
-                    break;
-                    case "trickNum.txt":
-                    setTrickNum(intLine);
-                    break;
-                }
+                int currentPlayerIndex = Integer.parseInt(line);
+                setCurrentLeadPlayer(players[currentPlayerIndex - 1]);
+                System.out.println(getCurrentLeadPlayer());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Load .txt file with a single line containing an integer value
+    public void loadTrickNum(String fileName) {
+        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+            String line = br.readLine();
+            if (line != null) {
+                int trickNum = Integer.parseInt(line);
+                setTrickNum(trickNum);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Load .txt file with a single line containing a string value
+    public void loadLeadCard(String fileName) {
+        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+            String line = br.readLine();
+            if (line != null) {
+                setHighestValCard(addLoadedCard(line, fileName));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -298,16 +336,16 @@ public class Turn {
     }
 
 
-    // public void saveLatestTrickLeader(String filename) {
-    //     try{
-    //         FileWriter w = new FileWriter("currentTrickLeader.txt", true);
-    //         w.write(String.valueOf(getCurrentLeadPlayer().getPlayerNum()));
-    //         w.close();
-    //     }catch (IOException e) {
-    //         System.out.println("An error occurred while saving the current trick leader.");
-    //         e.printStackTrace();
-    //     }
-    // }
+    public void saveLatestTrickLeader(String filename) {
+        try{
+            FileWriter w = new FileWriter("currentTrickLeader.txt", true);
+            w.write(String.valueOf(getCurrentLeadPlayer().getPlayerNum()));
+            w.close();
+        }catch (IOException e) {
+            System.out.println("An error occurred while saving the current trick leader.");
+            e.printStackTrace();
+        }
+    }
     
     public void turn(Scanner input, Player player, int numOfPlayers){
         // Print round details
@@ -366,25 +404,31 @@ public class Turn {
                 break;
                 case "save":
                 main.saveMainDeck("mainDeck.txt");
+                saveCenterDeck("centerDeck.txt");
                 saveTrickNum("trickNum.txt");
                 for (int i=0; i<numOfPlayers; i++){
                     savePlayerDeck("player" + (i + 1) + "Deck.txt", players[i]);
                 }
-                player.saveTrickLeaders("trickLeaders.txt", Player.getTrickLeaders());
-                validInput=true;
+                saveLatestTrickLeader("currentTrickLeader.txt");
+                saveLeadPlayer("leadPlayer.txt");
+                saveCurrentPlayer("currentPlayer.txt", player, main);
+                saveLeadCard("leadCard.txt");
+                //validInput=true;
                 invalidButDontBreak=true;
                 System.exit(0);
                 break;
-                case "resume":
-                loadDetails("currentPlayer.txt");
+                case "load":
+                //loadCurrentPlayer("currentPlayer.txt");
                 loadPlayerDecks();
                 loadCenterDeck();
                 loadMainDeck();
-                //loadDetails("trickLeaders.txt");
+                loadDetails("currentPlayer.txt");
                 loadDetails("trickNum.txt");
-                // printTurnDetails(4, center, main, player);
+                loadDetails("leadCard.txt");
+                //loadTrickNum("trickNum.txt");
+                //loadLeadCard("leadCard.txt");
+                printTurnDetails(4, center, main, player);
                 invalidButDontBreak = true;
-                break;
             }
 
             if(userInput.length()==2 && checkPlayedCard(userInput)){
@@ -411,6 +455,7 @@ public class Turn {
         playedCardMainMethod(player); 
     }
 
+    
     public void playedCardMainMethod(Player player){
             if(roundNumber==1 && trickNumber!=1){  // If first trick of the first round (because the original value for highest value card on the trick is NULL)
                 setHighestValCard(currentPlayedCard);
@@ -418,7 +463,7 @@ public class Turn {
             
             center.addCard(currentPlayedCard);  
             player.getDeck().remove(currentPlayedCard);
-            saveCenterDeck("centerDeck.txt");
+            //saveCenterDeck("centerDeck.txt");
             
             if(currentPlayedCard.getValue()>highestValCard.getValue()){ // If the played card's value is bigger than lead card value.
             setHighestValCard(currentPlayedCard);
@@ -428,7 +473,7 @@ public class Turn {
 
     public void printTurnDetails(int numOfPlayers, mainDeck center, mainDeck mainDeck, Player player){ // Construct a new turn each round
         System.out.println(); 
-        System.out.println("Trick #" + trickNumber); // Print trick number.
+        System.out.println("Trick #" + getTrickNum()); // Print trick number.
         System.out.println();
         
         // Print each player's deck
@@ -469,9 +514,23 @@ public class Turn {
             
         }
 
-        System.out.println("Turn: Player " + player.getPlayerNum());
+        if(center.emptyDeck()){
+            System.out.println("Turn: Player " + getCurrentLeadPlayer().getPlayerNum());
+        }else{
+            System.out.println("Turn: Player " + player.getPlayerNum());
+        }
+
+        if(!center.emptyDeck()){
+            System.out.println();
+            showEligibleCard(player, center, mainDeck);
+        }
+        System.out.println();
+
+    }
+
+    public void saveCurrentPlayer(String filename, Player player, mainDeck main){
         try{
-            PrintWriter w = new PrintWriter("currentPlayer.txt");
+            PrintWriter w = new PrintWriter(filename);
             w.write(String.valueOf(player.getPlayerNum()));
             System.out.println("Current Player saved successfully.");
             w.close();
@@ -479,12 +538,6 @@ public class Turn {
             System.out.println("An error occurred while saving the current player");
             e.printStackTrace();
         }
-        if(!center.emptyDeck()){
-            System.out.println();
-            showEligibleCard(player, center, mainDeck);
-        }
-        System.out.println();
-
     }
 
     public boolean checkEligibility(Player player){ // If player has card that can be played
@@ -587,7 +640,7 @@ public class Turn {
         System.out.println();
         System.out.println("Cards will be automatically drawn if player does not have any eligible cards to play");
         System.out.println();
-        System.out.println("Commands:\nx = quit game\ns = restart game\nskip = skip turn\nhelp = show menu\ndraw = draw a single card from the main deck\ndetails = show turn details\nsave = save the game");
+        System.out.println("Commands:\nx = quit game\ns = restart game\nskip = skip turn\nhelp = show menu\ndraw = draw a single card from the main deck\ndetails = show turn details\nsave = save and quit\nload = load and resume previous game");
         System.out.println();
     }
     
@@ -596,6 +649,16 @@ public class Turn {
             if(player.getPlayerTurn()==1){
                 this.setCurrentLeadPlayer(player);
             }
+        }
+    }
+
+    public void saveLeadPlayer(String filename){
+        try {
+            FileWriter w = new FileWriter(filename);
+            w.write(String.valueOf(getCurrentLeadPlayer().getPlayerNum()));
+        } catch (IOException e) {
+            System.out.println("An error occurred while saving the trick leaders.");
+            e.printStackTrace();
         }
     }
 
